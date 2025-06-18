@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Mail, Lock } from "lucide-react";
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase';
 
 
 const SignIn = () => {
-
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const handlesubmit = async (e) => {
@@ -15,10 +15,10 @@ const SignIn = () => {
     try {
       const res = await signInWithEmailAndPassword(auth, email, password)
       console.log(res)
-    
       toast.success('User Logged In Successfully', {
         position: 'top-center'
       })
+      navigate('/dashboard')
     } catch (error) {
       if(error.code == 'auth/invalid-credential'){
         toast.error('Email or Password Does Not Exist')
