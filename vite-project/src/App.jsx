@@ -22,7 +22,10 @@ function App() {
     },
     {
       path: 'dashboard',
-      element: <Dashboard />
+      element: <>
+      <Dashboard />
+      <Toaster />
+      </>
     }
 
   ])

@@ -3,16 +3,17 @@ import { useState } from "react"
 import { auth, db } from "../Firebase"
 import { setDoc, doc } from "firebase/firestore"
 import { toast } from 'react-hot-toast'
-import { Link } from "react-router"
+import { Link, Navigate, useNavigate } from "react-router"
 
 
 const SignUp = () => {
-
+  const navaigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       await createUserWithEmailAndPassword(auth, email, password)
       const user = auth.currentUser
+
       if (user) {
         await setDoc(doc(db, 'users', user.uid), {
           email: user.email,
@@ -25,7 +26,7 @@ const SignUp = () => {
         position: 'top-center',
       })
       console.log(user)
-
+      navaigate('/signin')
 
     } catch (error) {
       if(error.code == 'auth/email-already-in-use'){
