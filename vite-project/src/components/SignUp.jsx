@@ -1,48 +1,32 @@
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth"
 import { useState } from "react"
-import { auth, db } from "../Firebase"
-import { setDoc, doc } from "firebase/firestore"
 import { toast } from 'react-hot-toast'
 import { Link, Navigate, useNavigate } from "react-router"
+import app from '../Firebase'
+
 
 
 const SignUp = () => {
-  const navaigate = useNavigate()
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      await createUserWithEmailAndPassword(auth, email, password)
-      const user = auth.currentUser
 
-      if (user) {
-        await setDoc(doc(db, 'users', user.uid), {
-          email: user.email,
-          name: fullname,
-          password:password
-        })
-      }
-
-      toast.success('User Created Successfully', {
-        position: 'top-center',
-      })
-      console.log(user)
-      navaigate('/signin')
-
-    } catch (error) {
-      if(error.code == 'auth/email-already-in-use'){
-        toast.error('Email Already Exist ')
-        return
-      }
-      toast.error(error.code, {
-        position: 'top-center'
-      })
-      console.log(error.message)
-    }
-  }
-
+  const auth = getAuth(app)
   const [fullname, setFullname] = useState('')
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    await createUserWithEmailAndPassword(auth, email, password).then((currentUser) => {
+      const user = currentUser.user
+      console.log(user)
+    }).catch((error) => {
+      console.log(error)
+    })
+
+  }
+
+
+
 
 
   return (
@@ -103,5 +87,4 @@ const SignUp = () => {
     </div>
   )
 }
-
 export default SignUp

@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast"
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import SignIn from "./components/SignIn"
 import Dashboard from "./components/Dashboard"
+
 function App() {
   const router = createBrowserRouter([
 
@@ -21,12 +22,15 @@ function App() {
       </>
     },
     {
-      path: 'dashboard',
+      path: '/dashboard',
       element: <>
-      <Dashboard />
-      <Toaster />
+        <Dashboard/>
+        <Toaster />
       </>
-    }
+    },
+
+
+  
 
   ])
   return (
