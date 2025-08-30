@@ -1,11 +1,13 @@
 import { getAuth, signOut } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
 import { useNavigate } from 'react-router';
-import { getDatabase } from "firebase/database";
+
 import { useState } from "react";
 
 const auth = getAuth(app)
-const database = getDatabase(app);
+
 
 const Dashboard = () => {
     const [input, setInput] = useState('')
@@ -22,14 +24,31 @@ const Dashboard = () => {
         });
     }
 
+    const db = getFirestore(app);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
+        try {
 
-        const newtod = {
-            title: input
+            if (input === "") {
+                console.log("Please Enter Something")
+            }
+            else {
+                const newtodo = {
+                    title: input
+                }
+                setName((prev) => [...prev, newtodo])
+                const docRef = await addDoc(collection(db, "users"), {
+                    title: input,
+                });
+                console.log("Document written with ID: ", docRef);
+            }
         }
-        setName(prev => ([...prev, newtod]))
+        catch (error) {
+            console.log(error)
+
+        }
+
     }
 
 
@@ -55,7 +74,7 @@ const Dashboard = () => {
 
                     <div className="todo-div h-[90%] w-[100%] bg-amber-400 p-5 gap-2  flex flex-col">
                         {name.map((e, i) => (
-                                e.title === '' ? '': 
+                            e.title === '' ? '' :
                                 <div key={i} className="fuck">{e.title}</div>
                         ))}
                     </div>
