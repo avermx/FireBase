@@ -1,10 +1,11 @@
 import { getAuth, signOut } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, doc, onSnapshot } from "firebase/firestore";
 import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
 import { useNavigate } from 'react-router';
 
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 
 const auth = getAuth(app)
 
@@ -12,7 +13,7 @@ const auth = getAuth(app)
 const Dashboard = () => {
     const [input, setInput] = useState('')
     const [name, setName] = useState([])
-
+    const [data, setData] = useState([])
 
     const navigate = useNavigate()
     const handleSignOut = (e) => {
@@ -41,7 +42,7 @@ const Dashboard = () => {
                 const docRef = await addDoc(collection(db, "users"), {
                     title: input,
                 });
-                console.log("Document written with ID: ", docRef);
+                // console.log("Document written with ID: ", docRef);
             }
         }
         catch (error) {
@@ -52,7 +53,41 @@ const Dashboard = () => {
     }
 
 
-    console.log(name);
+    useEffect(() => {
+
+        const querySnapshot = async () => {
+            const hello = await getDocs(collection(db, "users"))
+            hello.forEach((doc) => {
+                setName((prev) => [...prev, doc.data()])
+            });
+        }
+
+        querySnapshot()
+
+        // const hello = () => {
+
+        //     const unsub = onSnapshot(collection(db, "users"), (doc) => {
+        //         doc.forEach((e) => {
+        //             setData((pre)=>[...pre,e.data()])
+        //             console.log(e.data());
+
+        //         })
+        //     });
+
+        // }
+        // hello()
+
+
+
+
+
+
+    }, [])
+
+
+
+
+
 
     return (
         <div className="h-screen w-full bg-amber-100 ">
@@ -73,9 +108,8 @@ const Dashboard = () => {
                     </form>
 
                     <div className="todo-div h-[90%] w-[100%] bg-amber-400 p-5 gap-2  flex flex-col">
-                        {name.map((e, i) => (
-                            e.title === '' ? '' :
-                                <div key={i} className="fuck">{e.title}</div>
+                        {name.map((data, i) => (
+                            <div className="fuck">{data?.title}</div>
                         ))}
                     </div>
 
