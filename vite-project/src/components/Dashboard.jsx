@@ -11,9 +11,9 @@ const auth = getAuth(app)
 
 
 const Dashboard = () => {
-    const [input, setInput] = useState('')
+    const [input, setInput] = useState()
     const [name, setName] = useState([])
-    const [data, setData] = useState([])
+
 
     const navigate = useNavigate()
     const handleSignOut = (e) => {
@@ -32,17 +32,23 @@ const Dashboard = () => {
         try {
 
             if (input === "") {
-                console.log("Please Enter Something")
+                return;
             }
             else {
                 const newtodo = {
-                    title: input
-                }
-                setName((prev) => [...prev, newtodo])
-                const docRef = await addDoc(collection(db, "users"), {
+                    id: 0,
                     title: input,
+                    completed: true
+                }
+
+                setName((prev) => [...prev, newtodo])
+                setInput("")
+                await addDoc(collection(db, "users"), {
+                    id: 0,
+                    title: input,
+                    completed: true
                 });
-                // console.log("Document written with ID: ", docRef);
+
             }
         }
         catch (error) {
@@ -50,6 +56,21 @@ const Dashboard = () => {
 
         }
 
+    }
+
+
+    const checkBox = (id) => {
+        setName(name.map((title) => {
+            if (title.id == id) {
+                return {
+                    ...title, completed: !title.completed
+                }
+            }
+            else{
+                return title;
+            }
+
+        }))
     }
 
 
@@ -101,15 +122,23 @@ const Dashboard = () => {
                 <div className=" h-full w-[60%] flex flex-col gap-5 ">
                     <form onSubmit={handleSubmit}>
                         <div className="w-full h-10 flex justify-center items-center content-center ">
-                            <input type="text" className="w-50 h-10  rounded-l-3xl p-2 border" onChange={(e) => setInput(e.target.value)
+                            <input type="text" className="w-50 h-10  rounded-l-3xl p-2 border" value={input} onChange={(e) => setInput(e.target.value)
                             } />
                             <button className="bg-amber-200 h-10 w-20 rounded-r-3xl" >Add Todo</button>
                         </div>
                     </form>
 
-                    <div className="todo-div h-[90%] w-[100%] bg-amber-400 p-5 gap-2  flex flex-col">
+                    <div className="todo-div  w-[100%] bg-amber-400 p-5 gap-2 flex flex-col items-center">
                         {name.map((data, i) => (
-                            <div className="fuck">{data?.title}</div>
+                            <div className="w-[50%] h-[4vh] bg-amber-50 flex items-center">
+                                <div className="pl-2">
+                                    <input type="checkbox" onChange={() => checkBox(data?.id)} checked={data?.completed} />
+                                </div>
+                                <div className="flex justify-center items-center w-full">
+                                    <h1 className={`text-center ${data?.completed ? 'line-through' : ""}`}>{data?.title}</h1>
+                                </div>
+
+                            </div>
                         ))}
                     </div>
 
