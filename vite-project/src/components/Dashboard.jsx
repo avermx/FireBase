@@ -13,7 +13,7 @@ const auth = getAuth(app)
 const Dashboard = () => {
     const [input, setInput] = useState()
     const [name, setName] = useState([])
-
+    const [fireId, setFireId] = useState()
 
     const navigate = useNavigate()
     const handleSignOut = (e) => {
@@ -36,17 +36,17 @@ const Dashboard = () => {
             }
             else {
                 const newtodo = {
-                    id: 0,
+                    id: name.length + 1,
                     title: input,
-                    completed: true
+                    completed: false
                 }
 
-                setName((prev) => [...prev, newtodo])
+                setName((prev) => [...prev, { data: newtodo }])
                 setInput("")
                 await addDoc(collection(db, "users"), {
-                    id: 0,
+                    id: name.length + 1,
                     title: input,
-                    completed: true
+                    completed: false
                 });
 
             }
@@ -61,15 +61,19 @@ const Dashboard = () => {
 
     const checkBox = (id) => {
         setName(name.map((title) => {
-            if (title.id == id) {
+            console.log(title)
+            
+            if (title.data.id == id) {
+
                 return {
                     ...title, completed: !title.completed
                 }
             }
-            else{
+            else {
                 return title;
             }
-
+            
+            
         }))
     }
 
@@ -79,7 +83,7 @@ const Dashboard = () => {
         const querySnapshot = async () => {
             const hello = await getDocs(collection(db, "users"))
             hello.forEach((doc) => {
-                setName((prev) => [...prev, doc.data()])
+                setName((prev) => [...prev, { data: doc.data(), id: doc.id }])
             });
         }
 
@@ -107,7 +111,9 @@ const Dashboard = () => {
 
 
 
-
+ 
+    console.log(name)
+    
 
 
     return (
@@ -132,10 +138,11 @@ const Dashboard = () => {
                         {name.map((data, i) => (
                             <div className="w-[50%] h-[4vh] bg-amber-50 flex items-center">
                                 <div className="pl-2">
-                                    <input type="checkbox" onChange={() => checkBox(data?.id)} checked={data?.completed} />
+                                    <input type="checkbox" onChange={() => checkBox(data?.data?.id)} checked={data?.completed} />
                                 </div>
                                 <div className="flex justify-center items-center w-full">
-                                    <h1 className={`text-center ${data?.completed ? 'line-through' : ""}`}>{data?.title}</h1>
+                                    <h1 className={`text-center ${data?.completed ? 'line-through' : ""}`}>{data?.data?.title
+                                    }</h1>
                                 </div>
 
                             </div>
