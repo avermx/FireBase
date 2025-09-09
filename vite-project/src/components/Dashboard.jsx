@@ -81,6 +81,7 @@ const Dashboard = () => {
             return;
         }
 
+        
 
         setName(
             name.map((e) => {
@@ -101,10 +102,11 @@ const Dashboard = () => {
     };
 
     const handleDelete = (id) => {
-        deleteDoc(doc(db, 'users', id))
+
         setName(name.filter((e) => (
             e.id !== id
         )))
+         deleteDoc(doc(db, 'users', id))
     }
 
     useEffect(() => {
