@@ -5,8 +5,11 @@ import {
     getDocs,
     deleteDoc,
     doc,
+    updateDoc,
+
     onSnapshot,
 } from "firebase/firestore";
+
 import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
 import { data, useNavigate } from "react-router";
@@ -62,6 +65,7 @@ const Dashboard = () => {
                     return {
                         ...title,
                         completed: !title.completed,
+
                     };
                 } else {
                     return title;
@@ -81,20 +85,24 @@ const Dashboard = () => {
             return;
         }
 
-        
-
         setName(
             name.map((e) => {
                 if (e.id === editId) {
+                    updateDoc(doc(db, 'users', e.id), {
+                        ...e,
+                        title: updateInp,
+                    })
                     return {
                         ...e,
                         title: updateInp,
+
                     };
                 } else {
                     return e;
                 }
             })
         );
+
 
 
         setUpdateInp('')
@@ -106,7 +114,7 @@ const Dashboard = () => {
         setName(name.filter((e) => (
             e.id !== id
         )))
-         deleteDoc(doc(db, 'users', id))
+        deleteDoc(doc(db, 'users', id))
     }
 
     useEffect(() => {
