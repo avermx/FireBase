@@ -59,9 +59,11 @@ const Dashboard = () => {
     const checkBox = (id) => {
         setName(
             name.map((title) => {
-
-
                 if (title?.id === id) {
+                    updateDoc(doc(db, 'users', title.id), {
+                        ...title,
+                        completed: !title.completed,
+                    })
                     return {
                         ...title,
                         completed: !title.completed,
@@ -77,6 +79,7 @@ const Dashboard = () => {
     const TodoClicked = (id, title) => {
         setEditId(id);
         setUpdateInp(title)
+
     };
 
     const handleSubmitUpdate = (e) => {
