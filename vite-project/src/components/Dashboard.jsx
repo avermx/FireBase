@@ -1,4 +1,4 @@
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import {
     addDoc,
     collection,
@@ -6,14 +6,11 @@ import {
     deleteDoc,
     doc,
     updateDoc,
-
-    onSnapshot,
 } from "firebase/firestore";
 
 import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
-import { data, useNavigate } from "react-router";
-
+import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 
 const auth = getAuth(app);
@@ -23,9 +20,29 @@ const Dashboard = () => {
     const [name, setName] = useState([]);
     const [updateInp, setUpdateInp] = useState();
     const [editId, setEditId] = useState("");
+    const [uid, setUid] = useState();
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUid(user.uid);
+                const querySnapshot = async () => {
+                    const hello = await getDocs(collection(db, `users/${user.uid}/todo`));
+                    let todo = [];
+                    hello.forEach((doc) => {
+                        todo.push({ ...doc.data(), id: doc.id });
+                    });
+                    setName(todo);
+                };
+                querySnapshot();
+            } else {
+                console.log("hello");
+            }
+        });
+    }, []);
 
     const navigate = useNavigate();
-    const handleSignOut = (e) => {
+    const handleSignOut = () => {
         signOut(auth)
             .then(() => {
                 navigate("/");
@@ -43,12 +60,15 @@ const Dashboard = () => {
             if (input === "") {
                 return;
             } else {
-                await addDoc(collection(db, "users"), {
+                await addDoc(collection(db, `users/${uid}/todo`), {
                     title: input,
                     completed: false,
                     id: name.length + 1,
                 });
-                setName((prev) => [...prev, { title: input, completed: false, id: name.length + 1 }]);
+                setName((prev) => [
+                    ...prev,
+                    { title: input, completed: false, id: name.length + 1 },
+                ]);
                 setInput("");
             }
         } catch (error) {
@@ -60,14 +80,13 @@ const Dashboard = () => {
         setName(
             name.map((title) => {
                 if (title?.id === id) {
-                    updateDoc(doc(db, 'users', title.id), {
+                    updateDoc(doc(db, "users", title.id), {
                         ...title,
                         completed: !title.completed,
-                    })
+                    });
                     return {
                         ...title,
                         completed: !title.completed,
-
                     };
                 } else {
                     return title;
@@ -78,27 +97,25 @@ const Dashboard = () => {
 
     const TodoClicked = (id, title) => {
         setEditId(id);
-        setUpdateInp(title)
-
+        setUpdateInp(title);
     };
 
     const handleSubmitUpdate = (e) => {
         e.preventDefault();
-        if (updateInp.trim() === '') {
+        if (updateInp.trim() === "") {
             return;
         }
 
         setName(
             name.map((e) => {
                 if (e.id === editId) {
-                    updateDoc(doc(db, 'users', e.id), {
+                    updateDoc(doc(db, `users/${uid}/todo`, e.id), {
                         ...e,
                         title: updateInp,
-                    })
+                    });
                     return {
                         ...e,
                         title: updateInp,
-
                     };
                 } else {
                     return e;
@@ -106,43 +123,13 @@ const Dashboard = () => {
             })
         );
 
-
-
-        setUpdateInp('')
-
+        setUpdateInp("");
     };
 
     const handleDelete = (id) => {
-
-        setName(name.filter((e) => (
-            e.id !== id
-        )))
-        deleteDoc(doc(db, 'users', id))
-    }
-
-    useEffect(() => {
-        const querySnapshot = async () => {
-            const hello = await getDocs(collection(db, "users"))
-            let todo = []
-            hello.forEach((doc) => {
-                todo.push({ ...doc.data(), id: doc.id })
-            });
-            setName(todo)
-        }
-        querySnapshot()
-
-        //     const unsub = onSnapshot(collection(db, "users"), (doc) => {
-        //         let todo = []
-        //         doc.forEach((e) => {
-        //             todo.push({ ...e.data(), id: e.id })
-        //         })
-        //         setName(todo)
-        //     });
-
-        // return () => unsub()
-    }, []);
-
-
+        setName(name.filter((e) => e.id !== id));
+        deleteDoc(doc(db, `users/${uid}/todo`, id));
+    };
 
     return (
         <div className="h-screen w-full bg-amber-100 ">
@@ -189,8 +176,22 @@ const Dashboard = () => {
                                     </h1>
                                 </div>
                                 <div className="pr-1 " onClick={() => handleDelete(data.id)}>
-                                    <svg class="w-5 h-5 text-gray-800 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                                    <svg
+                                        class="w-5 h-5 text-gray-800 "
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
+                                        />
                                     </svg>
                                 </div>
                             </div>
@@ -206,7 +207,9 @@ const Dashboard = () => {
                                 className="border"
                                 onChange={(e) => setUpdateInp(e.target.value)}
                             />
-                            <button disabled={updateInp === ''} className="bg-amber-950">Update</button>
+                            <button disabled={updateInp === ""} className="bg-amber-950">
+                                Update
+                            </button>
                         </div>
                     </form>
                 </div>
