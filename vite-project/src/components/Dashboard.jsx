@@ -8,10 +8,14 @@ import {
     updateDoc,
 } from "firebase/firestore";
 
+
+
 import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const auth = getAuth(app);
 
@@ -80,7 +84,7 @@ const Dashboard = () => {
         setName(
             name.map((title) => {
                 if (title?.id === id) {
-                    updateDoc(doc(db, "users", title.id), {
+                    updateDoc(doc(db, `users/${uid}/todo`, title.id), {
                         ...title,
                         completed: !title.completed,
                     });
@@ -110,6 +114,7 @@ const Dashboard = () => {
             name.map((e) => {
                 if (e.id === editId) {
                     updateDoc(doc(db, `users/${uid}/todo`, e.id), {
+
                         ...e,
                         title: updateInp,
                     });
@@ -142,7 +147,7 @@ const Dashboard = () => {
                 <div className=" h-full w-[60%] flex flex-col gap-5 ">
                     <form onSubmit={handleSubmit}>
                         <div className="w-full h-10 flex justify-center items-center content-center ">
-                            <input
+                            <Input
                                 type="text"
                                 className="w-50 h-10  rounded-l-3xl p-2 border"
                                 value={input}
@@ -158,7 +163,7 @@ const Dashboard = () => {
                         {name.map((data, i) => (
                             <div className="w-[50%] h-[4vh] bg-amber-50 flex items-center">
                                 <div className="pl-2">
-                                    <input
+                                    <Input
                                         type="checkbox"
                                         onChange={() => checkBox(data?.id)}
                                         checked={data?.completed}
@@ -201,15 +206,17 @@ const Dashboard = () => {
                 <div className="bg-red-300 h-full w-[20%]">
                     <form onSubmit={handleSubmitUpdate}>
                         <div className="h-full w-full bg-amber-200 text-center ">
-                            <input
+                            <Input 
                                 value={updateInp}
                                 type="text"
                                 className="border"
                                 onChange={(e) => setUpdateInp(e.target.value)}
                             />
-                            <button disabled={updateInp === ""} className="bg-amber-950">
+                            <Button disabled={updateInp === ""}>
                                 Update
-                            </button>
+                            </Button>
+
+                            
                         </div>
                     </form>
                 </div>
