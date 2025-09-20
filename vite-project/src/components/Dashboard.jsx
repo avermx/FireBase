@@ -8,7 +8,23 @@ import {
     updateDoc,
 } from "firebase/firestore";
 
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "../components/ui/accordion"
 
+
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 import { getFirestore } from "firebase/firestore";
 import app from "../Firebase";
@@ -159,9 +175,12 @@ const Dashboard = () => {
                         </div>
                     </form>
 
-                    <div className="todo-div  w-[100%] bg-amber-400 p-5 gap-2 flex flex-col items-center">
+                    <Card>
+                        
+                    </Card>
+                    {/* <div className="todo-div w-[100%] bg-amber-400 p-5 gap-2 flex flex-col items-center text-center">
                         {name.map((data, i) => (
-                            <div className="w-[50%] h-[4vh] bg-amber-50 flex items-center">
+                            <div className="w-[50%] h-fit bg-amber-50 flex items-center">
                                 <div className="pl-2">
                                     <Input
                                         type="checkbox"
@@ -174,7 +193,7 @@ const Dashboard = () => {
                                     onClick={() => TodoClicked(data?.id, data?.title)}
                                 >
                                     <h1
-                                        className={`text-center ${data?.completed ? "line-through" : ""
+                                        className={`text-center whitespace-normal break-words ${data?.completed ? "line-through" : ""
                                             }`}
                                     >
                                         {data?.title}
@@ -201,12 +220,14 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
+
+               
                 <div className="bg-red-300 h-full w-[20%]">
                     <form onSubmit={handleSubmitUpdate}>
                         <div className="h-full w-full bg-amber-200 text-center ">
-                            <Input 
+                            <Input
                                 value={updateInp}
                                 type="text"
                                 className="border"
@@ -215,13 +236,14 @@ const Dashboard = () => {
                             <Button disabled={updateInp === ""}>
                                 Update
                             </Button>
-
-                            
                         </div>
                     </form>
                 </div>
             </div>
+            
+            
         </div>
+          
     );
 };
 
