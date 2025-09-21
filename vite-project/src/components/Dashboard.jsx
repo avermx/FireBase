@@ -15,7 +15,17 @@ import {
     AccordionTrigger,
 } from "../components/ui/accordion"
 
-
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import {
     Card,
     CardAction,
@@ -154,16 +164,46 @@ const Dashboard = () => {
 
     return (
         <>
-        
+
             <div className="h-screen w-full bg-background dark text-foreground">
                 <div className="h-[10vh] w-full ">
                     <button onClick={handleSignOut}>Sign Out</button>
                 </div>
 
                 <div className="h-[90%] w-full  flex ">
-                    <div className=" h-full w-[20%]"></div>
-                    <div className=" h-full w-[60%] flex flex-col gap-5 ">
-                        <form onSubmit={handleSubmit}>
+                    <div className=" h-full w-[20%] "> </div>
+                    <div className=" h-full w-[60%] flex flex-col gap-5 justify-center">
+                        <div className="w-[100%] flex items-end justify-end">
+                            <Dialog className="b">
+                                <form>
+                                    <DialogTrigger asChild c>
+                                        <Button variant="outline">Add Todo</Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px] bg-background dark text-foreground">
+                                        <DialogHeader>
+                                            <DialogTitle>Create New Todo</DialogTitle>
+                                        </DialogHeader>
+                                        <div className="grid gap-4">
+                                            <div className="grid gap-3">
+                                                <Label htmlFor="name-1">Title</Label>
+                                                <Input placeholder="Enter todo title..." />
+                                            </div>
+                                            <div className="grid gap-3">
+                                                <Label >Description</Label>
+                                                <Input placeholder="Enter todo description..." />
+                                            </div>
+                                        </div>
+                                        <DialogFooter>
+                                            <DialogClose asChild>
+                                                <Button variant="outline">Cancel</Button>
+                                            </DialogClose>
+                                            <Button type="submit">Save changes</Button>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </form>
+                            </Dialog>
+                        </div>
+                        {/* <form onSubmit={handleSubmit}>
                             <div className="w-full h-10 flex justify-center items-center content-center text-foreground">
                                 <Input
                                     type="text"
@@ -175,7 +215,7 @@ const Dashboard = () => {
                                     Add Todo
                                 </Button>
                             </div>
-                        </form>
+                        </form> */}
 
                         <ScrollArea className={'h-[88%] '}>
                             <div className=" bg-background p-[2%] gap-2 flex flex-col items-center text-center">
@@ -244,7 +284,7 @@ const Dashboard = () => {
                     </div>
 
 
-                    <div className=" h-full w-[20%]">
+                    {/* <div className=" h-full w-[20%]">
                         <form onSubmit={handleSubmitUpdate}>
                             <div className="h-full  ">
                                 <Input
@@ -258,7 +298,7 @@ const Dashboard = () => {
                                 </Button>
                             </div>
                         </form>
-                    </div>
+                    </div> */}
                 </div>
 
 
